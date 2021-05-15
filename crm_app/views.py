@@ -1,16 +1,56 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from .models import *
+from .form import OrderForm
 
 # Create your views here.
 
 
 def home(request):
-    return render(request, 'crm_app/index.html')
+    orders = Order.objects.all()
+    last_five_order = orders[:5]
+    customers = Customer.objects.all()
+
+    total_orders = orders.count()
+    total_customers =customers.count()
+    delivered = orders.filter(status = 'Delivered').count()
+    pending = orders.filter(status='Pending').count()
+    context ={
+        'orders':orders,
+        'customers':customers,
+        'last_five_order':last_five_order,
+        'total_orders':total_orders,
+        'total_customers':total_customers,
+        'delivered':delivered,
+        'pending':pending
+    }
+    return render(request, 'crm_app/index.html', context)
 
 
 def products(request):
-    return render(request, 'crm_app/products.html')
+    product = Product.objects.all()
+    return render(request, 'crm_app/products.html', {'product':product})
 
 
-def customer(request):
-    return render(request, 'crm_app/customer.html')
+def customer(request, pk):
+    customer = Customer.objects.get(id=pk)
+    orders = customer.order_set.all()
+    total_order = orders.count()
+    context = {
+        'customer':customer, 
+        'orders':orders,
+        'total_order':total_order,}
+    return render(request, 'crm_app/customer.html', context)
+
+
+def createOrder(request):
+    form = OrderForm()
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form':form,}
+    return render(request, 'crm_app/create_order.html', context)

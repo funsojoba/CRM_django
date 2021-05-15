@@ -15,7 +15,20 @@
 							<th>Product</th>
 							<th>Category</th>
 							<th>Price</th>
+                            <th>Tags</th>
 						</tr>
+                        {% for i in product%}
+                        <tr>
+                            <td>{{i.name}}</td>
+                            <td>{{i.category}}</td>
+
+                            {% if i.price > 4500%}
+                            <td> Greater than 4500 </td>
+                            {% else %}
+                            <td>{{i.price}}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor%}
 						
 					</table>
 				</div>
