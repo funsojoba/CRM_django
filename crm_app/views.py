@@ -8,7 +8,7 @@ from .form import OrderForm
 
 def home(request):
     orders = Order.objects.all()
-    last_five_order = orders[:5]
+    last_five_order = orders
     customers = Customer.objects.all()
 
     total_orders = orders.count()
@@ -54,3 +54,27 @@ def createOrder(request):
 
     context = {'form':form,}
     return render(request, 'crm_app/create_order.html', context)
+
+
+def updateOrder(request, pk):
+    orders = Order.objects.get(id=pk)
+    form = OrderForm(instance=orders)
+
+    if request.method =='POST':
+        form = OrderForm(request.POST, instance=orders)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'orders':orders, 'form':form,}
+    return render(request, 'crm_app/update_order.html', context)
+
+
+def deleteOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    if request.method == 'POST':
+        order.delete()
+        return redirect('/')
+    
+    context = {'order':order}
+    return render(request, 'crm_app/delete_order.html', context)

@@ -1,0 +1,19 @@
+{% extends 'crm_app/main_template.html' %}
+
+{% block content %}
+
+<p>Are you sure you want to delete {{order}}?</p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                <a href="{% url 'home' %}" class="btn btn-sm btn-default">No, go back</a>
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
