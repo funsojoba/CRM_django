@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from .models import *
 from .form import OrderForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -38,7 +40,7 @@ def customer(request, pk):
     orders = customer.order_set.all()
     total_order = orders.count()
     context = {
-        'customer':customer, 
+        'customer':customer,
         'orders':orders,
         'total_order':total_order,}
     return render(request, 'crm_app/customer.html', context)
@@ -77,6 +79,24 @@ def deleteOrder(request, pk):
     if request.method == 'POST':
         order.delete()
         return redirect('/')
-    
+
     context = {'order':order}
     return render(request, 'crm_app/delete_order.html', context)
+
+
+def register(request):
+    forms = UserCreationForm()
+    if request.method == 'POST':
+        f = UserCreationForm(request.POST)
+        if f.is_valid():
+            f.save()
+            messages.success(request, 'Account created successfully')
+            return redirect('home')
+
+    context = {'forms': forms}
+    return render(request, 'crm_app/register.html', context)
+
+def login(request):
+
+    context = {}
+    return render(request, 'crm_app/login.html', context)
